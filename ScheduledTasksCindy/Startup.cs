@@ -28,6 +28,14 @@ namespace ScheduledTasksCindy
             //RecurringJob.AddOrUpdate(() => baseController.EnviarCorreo(), "0 */6 * * *");
             RecurringJob.AddOrUpdate("email_empleados", () => BaseController.EnviarCorreo(), Cron.Minutely);
 
+            // Agrega un trabajo recurrente
+            //RecurringJob.AddOrUpdate(
+            //    "my-recurring-job",
+            //    () => ExecuteTask(),
+            //    "0 8,16 * * *" // Ejecuta a las 8:00 AM y a las 4:00 PM todos los días
+            //);
+
+
             // Configuración de reintentos
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 3 });
 
