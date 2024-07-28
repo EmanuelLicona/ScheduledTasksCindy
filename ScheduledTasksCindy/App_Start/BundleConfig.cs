@@ -24,7 +24,25 @@ namespace ScheduledTasksCindy
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/select2.min.css",
+                      "~/Content/site.css",
+                      "~/Content/fullcalendar/fullcalendar.min.css",
+                      "~/Content/jquery-ui.min.css"
+                      ));
+
+
+            bundles.Add(new ScriptBundle("~/bundles/fullcalendar").Include(
+                   "~/Scripts/fullcalendar/moment.min.js",
+                   "~/Scripts/fullcalendar/fullcalendar.min.js"
+                   ));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                "~/Scripts/jquery-ui.min.js"
+                     ));
+
+            bundles.Add(new ScriptBundle("~/bundles/select2").Include(
+                "~/Scripts/select2.min.js"
+                     ));
         }
     }
 }

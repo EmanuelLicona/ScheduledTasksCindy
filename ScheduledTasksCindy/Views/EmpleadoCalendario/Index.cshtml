@@ -1,0 +1,312 @@
+﻿@{
+    ViewBag.Title = "Index Calendario";
+}
+
+
+<div class="container">
+    <div class="d-flex justify-content-between mb-3">
+        <p class="h5">Calendario de Empleado</p>
+
+        <button class="btn btn-secondary" onclick="verModal()">Agregar registro</button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id='calendar'></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCrear" class="container">
+
+                    <div class="mb-3 w-100">
+                        <label for="NombreEmpleado" class="form-label">Nombre Empleado</label>
+                        @*<input type="text" class="form-control" id="NombreEmpleado" name="NombreEmpleado">*@
+                        <select id="NombreEmpleado" name="NombreEmpleado" class="form-control" style="width: 100%">
+                            @*<option value="Empleado 1">Empleado 1</option>*@
+                            @*<option value="Empleado 2">Empleado 2</option>*@
+                        </select>
+                    </div>
+
+                    <div class="mb-3 w-100">
+                        <label for="FechaTurno" class="form-label">Fecha a asignar</label>
+                        <input type="text" class="form-control" id="FechaTurno" name="FechaTurno">
+                        @*<input type="date" class="form-control" id="FechaTurno" name="FechaTurno">*@
+                    </div>
+
+
+                    <div class="mb-3 w-100">
+                        <label for="PlantaEmpleado" class="form-label">Planta asignada</label>
+                        <select id="PlantaEmpleado" name="PlantaEmpleado" class="form-select" style="width: 100%" >
+                            @*<option value="Planta 1">Planta 1</option>
+                                <option value="Planta 2">Planta 2</option>*@
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3 w-100">
+                        <label for="TurnoEmpleado" class="form-label">Turno</label>
+                        <select id="TurnoEmpleado" name="TurnoEmpleado" class="form-select" style="width: 100%">
+                            @*<option value="Turno A">Turno A</option>
+                                <option value="Turno B">Turno B</option>*@
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="formCrear">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var data = [];
+        var fechaInicial = '';
+        var fechaFinal = '';
+        var eventoSeleccionado = null;
+
+        $("#FechaTurno").datepicker({
+            dateFormat: 'yy/mm/dd',
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            //yearRange: '2021:2022'
+        });
+
+        $('#NombreEmpleado').select2({
+            placeholder: 'Seleccione un empleado',
+            dropdownParent: $('#exampleModal'),
+            data: [
+                { id: "Empleado 1", text: 'Empleado 1' },
+                { id: "Empleado 2", text: 'Empleado 2' },
+                { id: "Empleado 3", text: 'Empleado 3' },
+                { id: "Empleado 3", text: 'Empleado 3' },
+                { id: "Empleado 4", text: 'Empleado 4' },
+                { id: "Empleado 4", text: 'Empleado 4' },
+                { id: "Empleado 5", text: 'Empleado 5' },
+            ]
+        });
+
+        $('#PlantaEmpleado').select2({
+            placeholder: 'Seleccione una planta',
+            dropdownParent: $('#exampleModal'),
+            data: [
+                { id: "Planta 1", text: 'Planta 1' },
+                { id: "Planta 2", text: 'Planta 2' },
+            ]
+        });
+
+        $('#TurnoEmpleado').select2({
+            placeholder: 'Seleccione un turno',
+            dropdownParent: $('#exampleModal'),
+            data: [
+                { id: "Turno A", text: 'Turno A' },
+                { id: "Turno B", text: 'Turno B' },
+            ]
+        });
+
+
+        $('#calendar').fullCalendar({
+            //lang: 'es',
+            //editable: true,
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                //right: 'month,agendaWeek,agendaDay',
+                right: 'none'
+            },
+            defaultView: 'month',
+            eventRender: function (event, element, view) { // Cuando se renderiza un evento
+                //return $('<div>' + event.title + '</div>'); // Para hacer el elemento desde cero
+
+                console.log(event);
+
+                // Ejemplo
+                //element.find('.fc-time').html('<span class="yourCSS"></span> ');
+                //element.find('.fc-title').html('<span class="yourCSS"></span> ');
+                let title = '';
+                let descripcion = '';
+
+                title += '<div class="d-flex justify-content-between">';
+                title += '<span>' + event.planta + '</span>';
+                title += '<span>' + event.turno + '</span>';
+                title += '</div>';
+
+                descripcion += '<div class="d-flex justify-content-between">';
+                descripcion += '<span>' + event.title + '</span>';
+                descripcion += '</div>';
+
+                element.find('.fc-time').html(title);
+                element.find('.fc-title').html(descripcion);
+
+                // agregar a fc-content para que al pasar el mouse se ponga cursor pointer
+                element.find('.fc-content').css('cursor', 'pointer');
+            },
+            eventSources: [data],
+
+            viewRender: function (view, element) { // Cuando cambia de vista
+                //console.log(view.start.format('YYYY-MM-DD'));
+                //console.log(view.end.format('YYYY-MM-DD'));
+
+                fechaInicial = view.start.format('YYYY-MM-DD');
+                fechaFinal = view.end.format('YYYY-MM-DD');
+
+                actualizarDatos();
+            },
+
+            // Evento click en un evento
+            eventClick: function (calEvent, jsEvent, view) {
+               selecccionarEvento(calEvent);
+            },
+
+            //evento al hacer click en un dia
+            dayClick: function (date, jsEvent, view) {
+                //alert('Clicked on: ' + date.format());
+                //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+                //alert('Current view: ' + view.name);
+
+                $('#FechaTurno').val(date.format('YYYY/MM/DD'));
+                $('#exampleModal').modal('show');
+            }
+            
+
+
+        });
+
+
+        function verModal() {
+            $('#exampleModal').modal('show');
+        }
+
+        $('#formCrear').on('submit', function (e) {
+            e.preventDefault();
+
+            const model = {
+                NombreEmpleado: $('#NombreEmpleado').val(),
+                FechaTurno: $('#FechaTurno').val(),
+                PlantaEmpleado: $('#PlantaEmpleado').val(),
+                TurnoEmpleado: $('#TurnoEmpleado').val()
+            }
+
+            // Validar lo campos
+            if (model.NombreEmpleado === '' || model.FechaTurno === '' || model.PlantaEmpleado === '' || model.TurnoEmpleado === '') {
+                alert('Todos los campos son requeridos');
+                return;
+            }
+
+
+            // validar formato de fecha
+            if (!moment(model.FechaTurno, 'YYYY/MM/DD', true).isValid()) {
+                alert('Formato de fecha incorrecto');
+                return;
+            }
+
+            if (eventoSeleccionado) {
+                editarEvento(model);
+            } else {
+                crearEvento(model);
+            }
+        });
+
+        function actualizarDatos() {
+            $.ajax({
+                type: "GET",
+                url: "/EmpleadoCalendario/ObtenerResumenCalendario",
+                //async: false,
+                cache: false,
+                data: {
+                    fechaInicial,
+                    fechaFinal,
+                },
+                success: function (result) {
+                    data = result.map(function (item) {
+                        return {
+                            id: item.Id,
+                            title: item.Title,
+                            start: moment(item.Start).format(),
+                            end: moment(item.End).format(),
+                            planta: item.Planta,
+                            turno: item.Turno,
+                            color: item.Color,
+                          
+                        };
+                    });
+
+                    $('#calendar').fullCalendar('removeEvents');
+                    $('#calendar').fullCalendar('addEventSource', data);
+                }
+            });
+        }
+
+        function selecccionarEvento(evento) {
+            // Mostrar modal
+            $('#exampleModal').modal('show');
+
+            // Llenar los campos
+            $('#NombreEmpleado').val(evento.title).trigger('change');
+            $('#FechaTurno').val(moment(evento.start).format('YYYY/MM/DD'));
+            $('#PlantaEmpleado').val(evento.planta).trigger('change');
+            $('#TurnoEmpleado').val(evento.turno).trigger('change');
+
+            eventoSeleccionado = evento;
+
+        }
+
+        function crearEvento(model) {
+
+           
+
+            $.ajax({
+                url: "/EmpleadoCalendario/CrearNuevo",
+                type: "POST",
+                data: { model },
+                success: function (result) {
+                    console.log(result);
+
+                    if (result.Status == true) {
+                        $('#exampleModal').modal('hide');
+                        $('#formCrear').trigger('reset');
+                        actualizarDatos();
+                        eventoSeleccionado = null;
+                    }
+
+                }
+            });
+
+        }
+
+        function editarEvento(model) {
+
+            model.IdTurno = eventoSeleccionado.id;
+
+            $.ajax({
+                url: "/EmpleadoCalendario/Actualizar",
+                type: "POST",
+                data: { model },
+                success: function (result) {
+                    console.log(result);
+
+                    if (result.Status == true) {
+                        $('#exampleModal').modal('hide');
+                        $('#formCrear').trigger('reset');
+                        actualizarDatos();
+                        eventoSeleccionado = null;
+                    }
+
+                }
+            });
+        }
+
+    </script>
+}
